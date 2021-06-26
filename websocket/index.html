@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font: 13px Helvetica, Arial;
+        }
+
+        form {
+            background: #000;
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        form input {
+            border: 0;
+            padding: 10px;
+            width: 90%;
+            margin-right: 0.5%;
+        }
+
+        form button {
+            width: 9%;
+            background: rgb(130, 224, 255);
+            border: none;
+            padding: 10px;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages li {
+            padding: 5px 10px;
+        }
+
+        #messages li:nth-child(odd) {
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+    <h1>websocket--<span id="name"></span></h1>
+    <ul id="messages">
+    </ul>
+    <form action="">
+        <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    let username = document.querySelector("#name")
+    let userElement = document.querySelector("#messages")
+    let inputContent = document.querySelector("#m")
+    let btn = document.querySelector("button")
+    btn.onclick = function(){
+        let message = inputContent.value
+        if(message !=="") {
+            socket.emit("message",{
+                message
+            })
+        }
+        inputContent.value = ""
+    }
+    let uid
+    const socket = io()
+    socket.on("hello",function(data){
+        console.log(data);
+        uid = data.id
+        username.innerHTML = uid
+        setMassage(`欢迎：${uid}`)
+    })
+    socket.on('welcome',function(data){
+        setMassage(`欢迎${data.id}进入了聊天室，点击可以与他/她进行聊天`)
+    })
+    socket.on('data',function(data){
+    setMassage(`${data.time}${data.id}说：${data.message}`)
+    })
+    function setMassage(message){
+        let li = document.createElement("li")
+        li.innerHTML = message
+        userElement.appendChild(li)
+    }
+
+</script>
+</html>
