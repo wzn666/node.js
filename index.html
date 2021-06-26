@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>轮询</h1>
+    <button>获取数据</button>
+    <ul></ul>
+
+    <script>
+
+        let ulElement = document.querySelector('ul');
+        let buttonElement = document.querySelector('button');
+
+        getData();
+
+        // buttonElement.onclick = function() {
+        //     getData();
+        // }
+
+        // setInterval(function() {
+        //     getData();
+        // }, 3000);
+
+        function getData() {
+            let xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                let data = JSON.parse(xhr.responseText);
+
+                ulElement.innerHTML = '';
+                data.forEach(d => {
+                    let li = document.createElement('li');
+                    li.innerHTML = d.title;
+                    ulElement.appendChild(li);
+                });
+
+                getData();
+            }
+
+            xhr.open('get', '/getData', true);
+            xhr.send();
+        }
+
+    </script>
+</body>
+</html>
